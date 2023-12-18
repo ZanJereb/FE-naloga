@@ -2,15 +2,7 @@
   <div>
     <div class="pb-8 min-h-[40px]" style="display: flex; flex-flow; row; justify-content: space-between; align-items: center; gap: 32px;">
       <div style="display: flex; flex-flow; row; justify-content: space-between; align-items: center; gap: 32px;">
-        <div class="myInputWrap">
-          <input
-            v-model="filter"
-            type="text"
-            class="myInput"
-            placeholder="Search files"
-            @change="filterByName"
-          />
-        </div>
+        <search-bar @search="handleSearch" />
         <div>
         </div>
       </div>
@@ -18,15 +10,6 @@
       </div>
     </div>
     <table class="min-w-full">
-      <colgroup>
-        <col style="width: 40px; min-width: 40px;">
-        <col>
-        <col>
-        <col>
-        <col>
-        <col>
-        <col>
-      </colgroup>
       <thead>
         <tr>
           <th colspan="1" rowspan="1"></th>
@@ -39,7 +22,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(data, i) in filteredBuckets" :key="i">
+        <tr v-for="data in filteredBuckets" :key="data.bucketUuid">
           <td>
             <input
               v-model="data.selected"
@@ -75,66 +58,42 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, onMounted, computed } from 'vue';
+
 import axios from 'axios';
 
 export default defineComponent({
   setup() {
-    const filter = ref<string>('');
+    const searchTable = ref('');
+    var tableData = ref([]);
 
-    interface BucketData {
-      selected: boolean
-      createTime: string,
-      updateTime: string,
-      bucketUuid: string,
-      bucketType: number,
-      name: string,
-      description: string,
-      size: number
-    }
-    const tableData: BucketData[] =
-      [
-        {
-          selected: false,
-          createTime: "2022-12-06T12:03:32.000Z",
-          updateTime: "2023-10-09T11:42:23.000Z",
-          bucketUuid: "cee9f151-a371-495b-acd2-4362fbb87780",
-          bucketType: 1,
-          name: "Storage",
-          description: "",
-          size: 3215839730,
-        },
-        {
-          selected: false,
-          createTime: "2022-12-06T12:03:32.000Z",
-          updateTime: "2023-10-09T11:42:23.000Z",
-          bucketUuid: "cee9f151-a371-495b-acd2-4362fbb87780",
-          bucketType: 2,
-          name: "Storage bucket",
-          description: "",
-          size: 32100,
-        },
-        {
-          selected: false,
-          createTime: "2022-12-06T12:03:32.000Z",
-          updateTime: "2023-10-09T11:42:23.000Z",
-          bucketUuid: "cee9f151-a371-495b-acd2-4362fbb87780",
-          bucketType: 3,
-          name: "Storage bucket",
-          description: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          size: 3215839730,
-        },
-      ]
+    onMounted(async ()=> {
+      await axios.get('https://api.apillon.io/storage/buckets', {
+          'headers': {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${btoa('f63ffc52-6dfd-414c-8ab9-6cc7d4a47551:W&2R2#m0i53R')}`
+          }
+        })
+        .then((res) =>  {
+          tableData.value = res.data.data.items;
+        })
+        .catch(e => {
+          console.log(e);
+        })
+    })
 
     const filteredBuckets = computed(() => {
-      if (!filter.value) {
-        return tableData;
+      console.log(searchTable.value)
+      if (!searchTable.value) {
+        return tableData.value;
       } else {
-        return tableData.filter(item =>
-          item.name.toLowerCase().includes(filter.value.toLowerCase())
-        );
-      }
-    });
+        return tableData.value.filter(bucket => bucket.name.includes(searchTable.value));
+      } 
+    })
+
+    const handleSearch = (search) => {
+      searchTable.value = search;
+    }
 
     function convertBucketType(bucketType): String{
       switch (bucketType) {
@@ -177,11 +136,10 @@ export default defineComponent({
     }
 
     return {
-      filter,
-      tableData,
+      filteredBuckets,
+      handleSearch,
       convertBucketType,
       convertSize,
-      filteredBuckets,
     }
   }
 })
