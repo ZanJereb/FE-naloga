@@ -69,4 +69,58 @@
     caret-color: #f0f2da;
     background-color: transparent;
   }
+  .refreshButton {
+    margin: 0;
+    font-weight: var(--n-font-weight);
+    line-height: 1;
+    font-family: inherit;
+    padding: 6px 10px;
+    height: 40px;
+    font-size: 14px;
+    border-radius: 8px;
+    color: #ffffffd1;
+    background-color: transparent;
+    white-space: nowrap;
+    outline: none;
+    position: relative;
+    z-index: auto;
+    border: 1px solid #313442;
+    display: inline-flex;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .addButton {
+    margin: 0;
+    font-weight: var(--n-font-weight);
+    line-height: 1;
+    font-family: inherit;
+    padding: 6px 10px;
+    height: 40px;
+    font-size: 14px;
+    border-radius: 8px;
+    color: #f9ff73;
+    background-color: transparent;
+    white-space: nowrap;
+    outline: none;
+    position: relative;
+    z-index: auto;
+    border: 1px solid #313442;
+    display: inline-flex;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+  }
 }
