@@ -1,3 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base{
+  h1{
+    font-size: 1.75rem;
+    line-height: 1.43;
+    font-weight:700;
+    color: #f0f2da;
+    margin: 0;
+  }
+  table tr, td, th{
+    border-bottom:  1px solid #313442;
+    padding: 12px;
+    font-size: 14px;
+    text-align: start;
+    white-space: nowrap;
+    color: #f0f2da;
+    flex: 1;
+    min-width: 0;
+  }
+  .myInputWrap{
+    overflow: hidden;
+    display: inline-flex;
+    flex-grow: 1;
+    position: relative;
+    padding-left: 12px;
+    padding-right: 12px;
+    max-width: 100%;
+    cursor: text;
+    line-height: 1.5;
+    z-index: auto;
+    outline: none;
+    box-sizing: border-box;
+    position: relative;
+    display: inline-flex;
+    border-radius: 8px;
+    background-color: #1e212b;
+    font-size: 14px;
+  }
+  .myInput {
+    overflow: hidden;
+    display: inline-flex;
+    flex-grow: 1;
+    position: relative;
+    padding-left: 12px;
+    padding-right: 12px;
+    max-width: 100%;
+    cursor: text;
+    line-height: 1.5;
+    z-index: auto;
+    outline: none;
+    box-sizing: border-box;
+    position: relative;
+    display: inline-flex;
+    border-radius: 8px;
+    background-color: #1e212b;
+    font-size: 14px;
+    padding: 0;
+    height: 40px;
+    line-height: 40px;
+    width: 100%;
+    min-width: 0;
+    text-decoration-color: #ffffffd1;
+    color: #f0f2da;
+    caret-color: #f0f2da;
+    background-color: transparent;
+  }
+}
