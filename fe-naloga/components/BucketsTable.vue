@@ -29,7 +29,7 @@
           </button>
         </div>
         <div>
-          <button class="addButton" @click="fetchBuckets">
+          <button class="addButton" @click="openAddBucket()">
             <div class="flex row" style="align-items: center;">
               <svg 
                 xmlns="http://www.w3.org/2000/svg"
@@ -54,48 +54,58 @@
     <table class="min-w-full">
       <thead>
         <tr>
-          <th colspan="1" rowspan="1"></th>
           <th colspan="1" rowspan="1">Bucket name</th>
           <th colspan="1" rowspan="1">Bucket type</th>
           <th colspan="1" rowspan="1">Bucket Uuid</th>
           <th colspan="1" rowspan="1">Storage usage</th>
           <th colspan="1" rowspan="1">Description</th>
-          <th colspan="1" rowspan="1"></th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="data in filteredBuckets" :key="data.bucketUuid">
-          <td>
-            <input
-              v-model="data.selected"
-              type="checkbox"/>
-          </td>
           <td>{{ data.name }}</td>
           <td>{{ convertBucketType(data.bucketType) }}</td>
           <td>{{ data.bucketUuid }}</td>
           <td>{{ convertSize(data.size) }}</td>
           <td>{{ data.description }}</td>
-          <td>
-            <button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                />
-              </svg>
-            </button>
-          </td>
         </tr>
       </tbody>
     </table>
+
+    <add-bucket-dialog :show="open" @close="addBucket">
+      <template v-slot:header>
+        <h3>New storage bucket</h3>
+      </template>
+      <template v-slot:body>
+        <div class="grid gap-4">
+          <div>
+            <p>Enter the desired name and description for the bucket so you can easily recognise it.</p>
+          </div>
+          <div>
+            <span>Bucket name*</span>
+            <div class="myInputWrap">
+              <input
+                v-model="bucketName"
+                type="text"
+                class="myInput"
+                placeholder="Bucket name"
+              />
+            </div>
+          </div>
+          <div>
+            <span>Bucket description</span>
+            <div class="myInputWrap">
+              <textarea
+                v-model="bucketDescription"
+                type="text"
+                class="myInput"
+                placeholder="Bucket description"
+              />
+            </div>
+          </div>
+        </div>
+      </template>
+    </add-bucket-dialog>
   </div>
 </template>
 
@@ -107,6 +117,11 @@ import axios from 'axios';
 export default defineComponent({
   setup() {
     const searchTable = ref('');
+    
+    const open = ref(false);
+    const bucketName = ref('');
+    const bucketDescription = ref('');
+
     var tableData = ref([]);
 
     onMounted(async ()=> {
@@ -114,7 +129,8 @@ export default defineComponent({
     })
 
     async function fetchBuckets() {
-      await axios.get('https://api.apillon.io/storage/buckets', {
+      await axios.get('https://api.apillon.io/storage/buckets',
+        {
           'headers': {
             'Content-Type': 'application/json',
             'Authorization': `Basic ${btoa('f63ffc52-6dfd-414c-8ab9-6cc7d4a47551:W&2R2#m0i53R')}`
@@ -122,8 +138,31 @@ export default defineComponent({
         })
         .then((res) =>  {
           tableData.value = res.data.data.items;
+        })
+        .catch(e => {
+          console.log(e);
+        })
+    }
 
-          tableData.value.map(obj => ({ ...obj, selected: 'false'}))
+    function openAddBucket() {
+      open.value = true;
+    }
+
+    async function addBucket() {
+      await axios.post('https://api.apillon.io/storage/buckets',
+        {
+          name: bucketName.value,
+          description: bucketDescription.value,
+        },
+        {
+          'headers': {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${btoa('f63ffc52-6dfd-414c-8ab9-6cc7d4a47551:W&2R2#m0i53R')}`
+          }
+        })
+        .then(() =>  {
+          open.value = false;
+          fetchBuckets();
         })
         .catch(e => {
           console.log(e);
@@ -184,6 +223,11 @@ export default defineComponent({
 
     return {
       filteredBuckets,
+      open,
+      bucketName,
+      bucketDescription,
+      openAddBucket,
+      addBucket,
       fetchBuckets,
       handleSearch,
       convertBucketType,
