@@ -1,10 +1,8 @@
 <template>
   <div>
     <div class="pb-8 min-h-[40px]" style="display: flex; flex-flow; row; justify-content: space-between; align-items: center; gap: 32px;">
-      <div style="display: flex; flex-flow; row; justify-content: space-between; align-items: center; gap: 32px;">
-        <search-bar @search="handleSearch" />
-        <div>
-        </div>
+      <div>
+        <search-bar @search="handleSearch" placeholder="Search buckets"/>
       </div>
       <div style="display: flex; flex-flow; row; justify-content: space-between; align-items: center; gap: 32px;">
         <div>
@@ -62,7 +60,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="data in filteredBuckets" :key="data.bucketUuid">
+        <tr v-for="data in filteredBuckets" :key="data.bucketUuid" @click="navigateToBucket(data.bucketUuid)">
           <td>{{ data.name }}</td>
           <td>{{ convertBucketType(data.bucketType) }}</td>
           <td>{{ data.bucketUuid }}</td>
@@ -111,11 +109,14 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router'
 
 import axios from 'axios';
 
 export default defineComponent({
   setup() {
+    const router = useRouter();
+
     const searchTable = ref('');
     
     const open = ref(false);
@@ -221,6 +222,10 @@ export default defineComponent({
       }
     }
 
+    function navigateToBucket(id) {
+      router.push(`/bucket/${id}`);
+    }
+
     return {
       filteredBuckets,
       open,
@@ -232,6 +237,7 @@ export default defineComponent({
       handleSearch,
       convertBucketType,
       convertSize,
+      navigateToBucket,
     }
   }
 })

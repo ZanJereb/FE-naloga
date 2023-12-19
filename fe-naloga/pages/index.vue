@@ -15,10 +15,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import BucketsTable from '../components/BucketsTable.vue';
 
 export default defineComponent({
-	components: { BucketsTable },
   setup() {
     return {
     }
